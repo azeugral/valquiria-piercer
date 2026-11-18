@@ -16,8 +16,8 @@
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="preload" href="fonts/gloock.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/hanken.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="img/hero/0.webp" as="image">
-<link rel="stylesheet" href="css/site.css">
+<link rel="preload" href="img/galeria/e007.webp" as="image">
+<link rel="stylesheet" href="css/site.css?v=2">
 </head>
 <body>
 
@@ -35,22 +35,14 @@
 
 <main id="topo">
 
-<section class="hero" aria-label="Valquíria">
-  <img class="orn orn-hero orn-e" src="img/orn/boca-clara.webp" alt="" aria-hidden="true">
-  <img class="orn orn-hero orn-d" src="img/orn/boca-clara.webp" alt="" aria-hidden="true">
-  <div class="hero-in">
-    <div class="quadro" id="quadro">
-      <div class="quadro-fotos" id="fotos">
-        <img src="img/hero/0.webp" alt="Joia em ouro rosé na ponta do dedo da Valquíria" width="1098" height="1373" fetchpriority="high">
-        <img src="img/hero/1.webp" alt="Joia com zircónias em ouro rosé" width="1098" height="1373">
-        <img src="img/hero/2.webp" alt="Topo em ouro com pedra" width="1098" height="1373">
-        <img src="img/hero/3.webp" alt="Joia em forma de escorpião" width="1098" height="1373">
-        <img src="img/hero/4.webp" alt="Conjunto de baguetes em ouro rosé" width="1098" height="1373">
-        <img src="img/hero/5.webp" alt="Argola com presas" width="1098" height="1373">
-      </div>
-      <span class="agulha-voo" id="voo" aria-hidden="true"></span>
-    </div>
-    <h1 class="hero-nome"><span class="sr">Valquíria</span><span class="logo-h" data-cor="claro" aria-hidden="true"></span></h1>
+<section class="hero gal" aria-label="Valquíria">
+  <div class="gal-cena" role="img" aria-label="Perfurações e joias da Valquíria em quadros sobre o chão do estúdio; em cada quadro uma foto dá lugar à seguinte, coberta em tinta">
+    <img class="g-poster" src="img/galeria/poster.jpg" alt="" width="1080" height="1350">
+    <video class="g-video" muted playsinline preload="none" aria-hidden="true"></video>
+    <canvas class="g-gl" aria-hidden="true"></canvas>
+  </div>
+  <div class="gal-txt">
+    <h1 class="hero-nome"><span class="sr">Valquíria, piercing e joalharia fina em Lisboa</span><span class="logo-h" data-cor="claro" aria-hidden="true"></span></h1>
     <span class="hero-agulha agulha" aria-hidden="true"></span>
     <p class="hero-sub">Piercing e joalharia fina em Lisboa, desde 2014</p>
     <div class="hero-bts">
@@ -227,6 +219,7 @@
 
 <script src="js/logo.js"></script>
 <script src="js/obras.js"></script>
-<script src="js/main.js"></script>
+<script src="js/galeria.js?v=2"></script>
+<script src="js/main.js?v=2"></script>
 </body>
 </html>

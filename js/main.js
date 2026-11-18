@@ -36,37 +36,67 @@
     el.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + L.q.w + ' ' + L.q.h + '" fill="#121312" fill-rule="evenodd"><path d="' + L.q.d + '"/></svg>';
   });
 
-  /* ---------- hero: a agulha atravessa o quadro e revela a joia seguinte ---------- */
-  var fotos = [].slice.call(d.querySelectorAll('#fotos img'));
-  var voo = d.getElementById('voo');
+  /* ---------- hero "galeria no chão" (modelo Veríssimo): perfurações e joias em quadros; cada foto cobre a anterior
+     em tinta, um quadro depois do outro. WebGL no PC, MP4 no celular em pé ---------- */
   var reduz = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (voo && fotos.length) {
-    voo.innerHTML = agulha(CORES.osso || '#e9dccb');
-    voo.querySelector('svg').setAttribute('fill', '#e3c8a8');
-    var atual = -1, PASSO = 1150, CICLO = 5200;
-    function passa() {
-      var prox = (atual + 1) % fotos.length, el = fotos[prox];
-      var w = voo.parentNode.clientWidth, vw = voo.clientWidth;
-      el.classList.add('vem');
-      if (reduz) { fim(); return; }
-      // agulha: entra pela esquerda, a ponta (à direita) cruza o quadro
-      var a = voo.animate([{ transform: 'translate(' + (-vw) + 'px,-50%)' }, { transform: 'translate(' + (w + 20) + 'px,-50%)' }], { duration: PASSO, easing: 'cubic-bezier(.55,.1,.35,1)', fill: 'forwards' });
-      // revelação acompanha a ponta da agulha (tip = translate + vw)
-      var tot = w + 20 + vw, o1 = Math.min(.999, (w + 10) / tot);
-      el.animate([{ clipPath: 'inset(0 100% 0 0)', offset: 0 }, { clipPath: 'inset(0 0% 0 0)', offset: o1 }, { clipPath: 'inset(0 0% 0 0)', offset: 1 }], { duration: PASSO, easing: 'cubic-bezier(.55,.1,.35,1)', fill: 'forwards' });
-      a.onfinish = fim;
-      function fim() {
-        fotos.forEach(function (f, i) { if (i !== prox) { f.classList.remove('on'); f.getAnimations().forEach(function (x) { x.cancel(); }); } });
-        el.classList.add('on'); el.classList.remove('vem');
-        el.getAnimations().forEach(function (x) { x.cancel(); });
-        atual = prox;
+  var hero = d.querySelector('.gal'), cena = d.querySelector('.gal-cena'), V = '?v=2', INTRO = 2.4;
+  var baixa = function () { return innerHeight <= 520 && innerWidth > innerHeight; };
+  var celPe = function () { return innerWidth <= 860 && !baixa(); };
+  function estatico() { cena.classList.add('est'); }
+  function iniciaGL(celular) {
+    if (!window.galeria || !window.GALERIA) return false;
+    if (!d.createElement('canvas').getContext('webgl')) return false;
+    var cv = d.querySelector('.g-gl'), imgs = {}, faltam = 0, G = null, falhou = false;
+    var lay = celular ? 'cel' : baixa() ? 'baixa' : 'pc', nomes = {};
+    window.GALERIA[lay].forEach(function (q) { q.arts.forEach(function (n) { nomes[n] = 1; }); });
+    function pronto() {
+      if (falhou || faltam) return;
+      var fd = celular ? [.9, 1] : lay === 'baixa' ? [.5, .9] : [.66, 1];
+      try { G = window.galeria(cv, { imgs: imgs, quadros: window.GALERIA[lay].map(function (q) { return Object.assign({}, q); }), fundo: fd }); } catch (e) { G = null; }
+      if (!G) { falhou = true; if (!celular) iniciaVideo(); else estatico(); return; }
+      cena.classList.add('gl');
+      var t0 = 0, vis = true, raf = 0, pausa = 0, tp = 0;
+      function quadro(ts) {
+        if (!t0) t0 = ts;
+        if (pausa) { t0 += ts - pausa; pausa = 0; }
+        G.desenha((ts - t0) / 1000, devicePixelRatio || 1);
+        tp = ts;
+        raf = vis ? requestAnimationFrame(quadro) : 0;
       }
+      new IntersectionObserver(function (es) {
+        vis = es[0].isIntersecting;
+        if (!vis) pausa = tp;
+        if (vis && !raf) raf = requestAnimationFrame(quadro);
+      }).observe(cena);
+      raf = requestAnimationFrame(quadro);
     }
-    setTimeout(passa, 250);
-    var timer = setInterval(passa, CICLO);
-    d.addEventListener('visibilitychange', function () {
-      clearInterval(timer); if (!d.hidden) timer = setInterval(passa, CICLO);
+    Object.keys(nomes).forEach(function (n) {
+      faltam++;
+      var im = new Image(); im.decoding = 'async'; im.src = 'img/galeria/' + n + '.webp' + V; imgs[n] = im;
+      im.onload = function () { faltam--; pronto(); };
+      im.onerror = function () { if (!falhou) { falhou = true; if (!celular) iniciaVideo(); else estatico(); } };
     });
+    return true;
+  }
+  var videoTentado = false;
+  function iniciaVideo() {
+    if (videoTentado) return; videoTentado = true;
+    var v = d.querySelector('.g-video');
+    v.src = 'img/galeria/galeria.mp4' + V; v.preload = 'auto';
+    var p = v.play();
+    // iPhone em modo de economia recusa o autoplay: aí o shader faz o trabalho
+    if (p && p.catch) p.catch(function () { if (!cena.classList.contains('gl') && !iniciaGL(true)) estatico(); });
+    v.addEventListener('playing', function () { cena.classList.add('vd'); }, { once: true });
+    // o vídeo abre com os quadros pousando; o laço volta para depois da entrada
+    v.addEventListener('ended', function () { v.currentTime = INTRO; v.play().catch(function () {}); });
+    v.addEventListener('error', function () { if (!iniciaGL(true)) estatico(); });
+    d.addEventListener('visibilitychange', function () { if (!d.hidden && cena.classList.contains('vd')) v.play().catch(function () {}); });
+  }
+  if (hero) {
+    if (reduz) estatico();
+    else if (celPe()) iniciaVideo();
+    else if (!iniciaGL(false)) iniciaVideo();
+    requestAnimationFrame(function () { hero.classList.add('pronto'); });
   }
 
   /* ---------- nav ---------- */

@@ -2,7 +2,7 @@
 
 Prévia do site da Valquíria (@valquiriapiercer), body piercer em Lisboa desde 2014, dona do estúdio Valquíria Piercing · Fine Jewelry · Tattoo (Rua Doutor Silva Teles 11A, Avenidas Novas). Página `noindex`.
 
-- **Conceito:** a agulha da logo dela atravessa o quadro e, atrás da ponta, aparece a joia seguinte, sempre na ponta do dedo de luva, como ela fotografa.
+- **Conceito (hero):** galeria no chão, no modelo do site do Veríssimo: perfurações e joias dela em quadros (preto com passe-partout, petróleo laqueado, ouro rosé) largados num chão petróleo; em cada quadro a foto seguinte cobre a anterior em tinta, em onda. WebGL no PC (`js/galeria.js`), MP4 4:5 no celular (`img/galeria/galeria.mp4`, gerado por `tools/gerar_galeria.py`).
 - **Identidade:** logo oficial vetorizada (VAL QUÍ RÍA + agulha), petróleo `#0e2726`, papel `#efebe4`, ouro `#c08a5c`; Gloock + Hanken Grotesk. Adorno: a boca atravessada pela agulha, desenho dela (marca d'água das fotos).
 - **Secções:** Perfurações (72 fotos, Orelha/Rosto/Corpo, lightbox com "Quero uma assim"), Joias (ouro 14k/18k e titânio/ouro rosé com "Quero esta"), Como trabalho, Sobre, Estúdio (mapa), Marcação (4 passos + formulário que abre o WhatsApp).
 - Marcas d'água (boca @valquiriapiercer e selo Stiletto) apagadas com LaMa (`tools/dewm.py`).
